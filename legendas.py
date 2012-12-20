@@ -12,22 +12,34 @@
 
 from httplib2 import Http
 import urllib
-from urllib import urlencode
+import html5lib
+from html5lib import treebuilders, treewalkers, serializer
+from html5lib.filters import sanitizer
+
 
 h = Http()
 data = dict(txtLogin="mbcastro", txtSenha="syntricks")
 headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+resp, content = h.request("http://legendas.tv/login_verificar.php", "POST", urllib.urlencode(data), headers)
 
-resp, content = h.request("http://legendas.tv/login_verificar.php", method="POST", body=urlencode(data), headers=headers)
-
-#print resp
-#print content
-
-data = ["txtLegenda=big bang theory", "selTipo=1", "int_idioma=1"]
-print urllib.quote(data, '')
-resp, content = h.request("http://legendas.tv/index.php?opcao=buscarlegenda", "POST", urlencode(data),headers)
+#Assert login successful
 
 
+fields =["opcao", "txtLegenda", "selTipo", "int_idioma"]
+values = map(lambda a: urllib.quote(a, ''), ["buscarlegenda", "big bang theory", "1", "1"])
+encodedData = reduce (
+    lambda a, b: a + '&' + b, 
+    [field + '=' + value for (field, value) in zip(fields, values)])
+resp, content = h.request("http://legendas.tv/index.php", "POST", encodedData, headers)
 
-#print resp
-#print content
+#Assert response successful
+
+parser = html5lib.HTMLParser(tree=treebuilders.getTreeBuilder("dom"))
+dom_tree = parser.parse(content)
+walker = treewalkers.getTreeWalker("dom")
+stream = walker(dom_tree)
+serializer = serializer.htmlserializer.HTMLSerializer(omit_optional_tags=False)
+output_generator = serializer.serialize(stream)
+
+for item in output_generator:
+    print item
