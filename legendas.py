@@ -28,18 +28,10 @@ for code, name in result:
     
     file_type = filename[filename.rfind('.')+1:].lower()
     if file_type == "zip":
-        os.system('unzip -o ' + filename + " -d subtitles/")
+        os.system('unzip -o -qq ' + filename + " -d subtitles/")
     else:
         if file_type == "rar":
-            os.system('unrar e -y ' + filename + " subtitles/")
+            os.system('unrar e -y -inul ' + filename + " subtitles/")
         else:
             print ""
-
-
-#print request_subtitle.status_code
-#print request_subtitle.history
-#print request_subtitle.headers
-#print request_subtitle.content
-
-
 
