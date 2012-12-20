@@ -30,8 +30,9 @@ values = map(lambda a: urllib.quote(a, ''), ["buscarlegenda", "big bang theory",
 encodedData = reduce (
     lambda a, b: a + '&' + b, 
     [field + '=' + value for (field, value) in zip(fields, values)])
-resp, content = h.request("http://legendas.tv/index.php", "POST", encodedData, headers)
+resp, content = h.request("http://legendas.tv/index.php", "GET", encodedData, headers)
 
+print content
 #Assert response successful
 
 parser = html5lib.HTMLParser(tree=treebuilders.getTreeBuilder("dom"))
@@ -41,5 +42,5 @@ stream = walker(dom_tree)
 serializer = serializer.htmlserializer.HTMLSerializer(omit_optional_tags=False)
 output_generator = serializer.serialize(stream)
 
-for item in output_generator:
-    print item
+#for item in output_generator:
+#    print item
