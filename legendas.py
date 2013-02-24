@@ -4,8 +4,8 @@ import os
 import sys
 
 #login and password
-login = 'yourloginhere'
-password = 'yourpasswordhere' 
+login = 'evanaska'
+password = 'evamaria' 
 
 #input parameter: example "big bang theory S03 E05"
 query = sys.argv[1]
@@ -31,12 +31,16 @@ for code, name in result:
     request_subtitle = requests.get("http://legendas.tv/info.php?d=" + code + "&c=1", headers=headers, cookies=request_login.cookies, allow_redirects=False)
     filename = request_subtitle.headers['location']
 
+    print "Downloading " + filename
+
     request_file = requests.get("http://legendas.tv/" + filename, headers=headers, cookies=request_login.cookies, stream=True, allow_redirects=False)
  
     filename = "subtitles/" + filename[filename.rfind('/')+1:]
     f = open(filename, 'wb')
     f.write(request_file.raw.read())
     f.close()
+
+    print "Extracting " + filename
     
     file_type = filename[filename.rfind('.')+1:].lower()
     if file_type == "zip":
